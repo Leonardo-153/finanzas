@@ -1,0 +1,61 @@
+<html>
+  <head>
+      <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', { packages: ['corechart'] });
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        // Configuración (¡CAMBIA ESTO!)
+        //ID de finanzas
+        //https://docs.google.com/spreadsheets/d/1dNh7Akl787WvVfU4YmfSZ9sDCImCbxXIsHFVb65DjmE/edit?usp=sharing
+        //ID de prueba
+        //1GgqHQY7tRvPLYS7ZwiHK3K5osfISTrVDGW_DrQXxDp4
+        const spreadsheetId = '1dNh7Akl787WvVfU4YmfSZ9sDCImCbxXIsHFVb65DjmE'; // Tu ID
+        const sheetName = 'Respuestas de formulario 1'; // Nombre de tu pestaña/hoja
+        const queryString = 'SELECT C, D WHERE A IS NOT NULL'; // Consulta SQL
+
+        // URL de la API (NO MODIFICAR)
+        const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?sheet=${sheetName}&tq=${encodeURIComponent(queryString)}`;
+
+        // Consulta y manejo de datos
+        const query = new google.visualization.Query(url);
+        
+        query.send(response => {
+          if (response.isError()) {
+            console.error('Error: ', response.getMessage());
+            alert('Error al cargar datos. Revisa la consola.');
+            return;
+          }
+
+          const data = response.getDataTable();
+          console.log('Datos recibidos:', data); // Verifica en consola
+
+          // Opciones de la gráfica
+          const options = {
+            title: 'Mis finanzas',
+            titleFontSize: 40,
+            width: 800,
+            height: 400,
+            legend: 'none',
+            hAxis: {title: "Importe", titleColor:'#000000', titleFontSize:20},
+            vAxis: {title: "Concepto", titleColor:'#000000', titleFontSize:20}
+          };
+          /*
+          { title:"Finanzas", titleFontSize:40, width: '50%', isStacked: true
+            ,hAxis: {title: "Gastos", titleColor:'#000000', titleFontSize:20}
+            ,vAxis: {title: "Pesos", titleColor:'#000000', titleFontSize:20}}
+          */
+
+          // Dibujar gráfica
+          const chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+          chart.draw(data, options);
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div id="chart_div"></div>
+  </body>
+</html>
